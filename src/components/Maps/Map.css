@@ -1,0 +1,5 @@
+.map-content {
+    width: 100%;
+    /* FIX */
+    height: calc(100vh - 150px); 
+}
