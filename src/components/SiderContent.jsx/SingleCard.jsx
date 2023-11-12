@@ -13,7 +13,8 @@ const SingleCard = ({ wagon, showPath, setDrawPath }) => {
 
   // const color = isFav ? 'yellow'none'
 
-  const starClick = () => {
+  const starClick = (e) => {
+    console.log('starr')
     setIsFav(!isFav)
   }
 
@@ -45,12 +46,13 @@ const SingleCard = ({ wagon, showPath, setDrawPath }) => {
           display: 'inherit',
           alignItems: 'center'
         }}
-          onClick={() => starClick}
+          
         >
           <p><b>{title}</b>  </p>
           <img src={wagonLogo} alt="Вагон" height={25} style={{ marginLeft: '10px' }} /></div>
 
-        <StarOutlined color={'#FFFF00'} style={{ background: isFav ? 'yellow' : 'none' }} />
+        <StarOutlined color={'#FFFF00'} style={{ background: isFav ? 'yellow' : 'none' }} 
+        onClick={(e) => starClick(e)}/>
 
         <Badge count={'В пути'} style={{
           borderColor: '#56B7A1',
