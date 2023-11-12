@@ -1,6 +1,6 @@
 import { YMaps, Map, Placemark, Polyline } from '@pbe/react-yandex-maps';
 import "./Map.css"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // const marker = new window.ymaps.Placemark([55.76, 37.64], {
 //     hintContent: 'Москва!',
@@ -10,124 +10,42 @@ import { useState } from 'react';
 //     iconColor: '#ff0000'
 //     });
 
-const testStation = {
-    id: 2154,
-    latitude: '58.651900',
-    longitude: '41.287100'
-}
 
-const path = [
-    {
-        "stations": [
-            {
-                "start": {
-                    "id": 134,
-                    "latitude": 58.6061,
-                    "longitude": 49.6438
-                },
-                "end": {
-                    "id": 122,
-                    "latitude": 56.2377,
-                    "longitude": 44.0403
-                },
-                "distance": 5
-            },
-            {
-                "start": {
-                    "id": 122,
-                    "latitude": 56.2377,
-                    "longitude": 44.0403
-                },
-                "end": {
-                    "id": 138,
-                    "latitude": 58.4708,
-                    "longitude": 49.3095
-                },
-                "distance": 3
-            },
-            {
-                "start": {
-                    "id": 138,
-                    "latitude": 58.4708,
-                    "longitude": 49.3095
-                },
-                "end": {
-                    "id": 261,
-                    "latitude": 48.999957,
-                    "longitude": 24.596826
-                },
-                "distance": 9
-            },
-            {
-                "start": {
-                    "id": 261,
-                    "latitude": 48.999957,
-                    "longitude": 24.596826
-                },
-                "end": {
-                    "id": 263,
-                    "latitude": 49.259332,
-                    "longitude": 24.495089
-                },
-                "distance": 3
-            }]
-    }
-]
+//Отображение содержимого карты
+const MapContent = ({ drawPath, setDrawPath, curPath, setCurrentStation, setStationClicked, stations }) => {
 
-
-
-const MapContent = ({ setCurrentStation, setStationClicked, stations, drawPath, setDrawPath }) => {
-
-    // const template = createPinTemplateFactory(mapInstanceRef)({      
-    //     onPinClick: onClick,      
-    //     description: pin.description,      
-    //     isActive: pin.isActive,      
-    //     isViewed: pin.isViewed,    
-    //   }); 
     const polyline = []
+    let lastStation
 
-    // "start": {
-    //     "id": 261,
-    //     "latitude": 48.999957,
-    //     "longitude": 24.596826
-    //   },
-    //   "end": {
-    //     "id": 263,
-    //     "latitude": 49.259332,
-    //     "longitude": 24.495089
-    //   },
-    //   "distance": 3
-    let  lastStation
+    //Функция для добавления координат будущего маршрута и заданной точки до
+    //станции назначения вагона
+    function createPolyline(curPath) {
 
-    function createPolyline(path) {
-        const stations = path[0].stations
-        stations.map(p => {
-            
-            polyline.push([p.start.latitude, p.start.longitude])
-        })
+        // console.log('curpath-', curPath)
 
-        //Last value in path object
-        lastStation = stations[Object.keys(stations)[Object.keys(stations).length - 1]]
-        console.log(lastStation)
-        polyline.push([lastStation.end.latitude, lastStation.end.longitude])
+        for (let i = 0; i <= curPath.length - 1; i++) {
+            const stations = curPath[i].stations
+            stations.map(p => {
 
-       
+                polyline.push([p.start.latitude, p.start.longitude])
+            })
 
+            //Последний объект в массиве координат
+            lastStation = stations[Object.keys(stations)[Object.keys(stations).length - 1]]
 
-    }
-
-    if (drawPath) {
-        createPolyline(path)
+            polyline.push([lastStation.end.latitude, lastStation.end.longitude])
+        }
         // setDrawPath(false)
     }
 
+    if (drawPath && curPath) {
+        createPolyline(curPath)
+    }
 
     const placemarkClick = ({ id }) => {
         setStationClicked(true)
         setCurrentStation(id)
 
-        
-      
     }
 
 
@@ -141,25 +59,8 @@ const MapContent = ({ setCurrentStation, setStationClicked, stations, drawPath, 
                             zoom: 5,
 
                         }}
-
-
                         className='map-content'
-                        onClick={(e) => console.log(e.coordinates)}
-
                     >
-
-                       
-
-                        <Placemark
-                            geometry={[testStation.latitude, testStation.longitude]}
-                            options={{
-                                // Проброс темплейта
-                                iconColor: 'red',
-
-                            }}
-
-                            key={testStation.id}
-                            onClick={() => placemarkClick(testStation)} />
 
                         {stations.map((s) => (
 
@@ -180,9 +81,7 @@ const MapContent = ({ setCurrentStation, setStationClicked, stations, drawPath, 
                         ))
                         }
 
-
                         <Polyline
-
                             geometry={polyline}
                             options={{
                                 balloonCloseButton: true,
@@ -200,18 +99,18 @@ const MapContent = ({ setCurrentStation, setStationClicked, stations, drawPath, 
                                 }}
                         />
 
-                     {/* Конечная точка */}
-                     
-                     {/* <Placemark
+                        {/* Конечная точка */}
+
+                        {curPath.length && <Placemark
                             geometry={[lastStation.end.latitude, lastStation.end.longitude]}
                             options={{
-                                // Проброс темплейта
+
                                 iconColor: 'orange',
 
                             }}
 
-                            // key={lastStation.end.id}
-                            onClick={() => placemarkClick(testStation)} /> */}
+                            key={lastStation.end.id}
+                            onClick={() => placemarkClick(lastStation)} />}
 
                     </Map>
                 </div>

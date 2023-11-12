@@ -9,15 +9,19 @@
     
 }
 .parent {
-    position: relative;
+    
 }
 .clock {
     padding: 0;
     position: absolute;
-    top:0;
+    top:50;
     left: 30;
     z-index: 10;
     border-width: 2px;
 	border-color: rgb(30, 31, 32) !important;
 	background-color: rgba(239, 239, 239, 0.6);
+}
+
+h2 {
+    color: 'blue'
 }

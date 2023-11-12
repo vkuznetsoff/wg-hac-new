@@ -1,14 +1,11 @@
 import { Layout, Space } from 'antd';
-import "./Layout.css"
-import Map from '../Maps/Map';
 import MapContent from '../Maps/Map';
 import SiderContent from '../SiderContent.jsx/SiderContent';
 import { useEffect, useState } from 'react';
-import { AllStations } from '../../data/stations';
 import MainHeader from '../Header/Header';
 import MainTable from '../Table/MainTable';
-
 import Clock from 'react-simple-clock'
+import "./Layout.css"
 
 
 
@@ -26,15 +23,11 @@ const headerStyle = {
   backgroundColor: '#EFEFEF',
   borderBottom: '2px solid rgba(174, 182, 191 , 0.8)'
 };
+
 const contentStyle = {
   textAlign: 'center',
-  // minHeight: 120,
-  // lineHeight: '120px',
-  // color: '#fff',
-  // backgroundColor: '#108ee9',
 };
 const siderStyle = {
-
   textAlign: 'center',
   lineHeight: '120px',
   color: '#fff',
@@ -43,9 +36,8 @@ const siderStyle = {
   fontWeight: '800',
   overflow: 'scroll',
   lineHeight: 5,
- 
-
 };
+
 const footerStyle = {
   textAlign: 'center',
   color: '#595959',
@@ -53,123 +45,47 @@ const footerStyle = {
 };
 
 
-
-const initStations = [
-  {
-    id: 1,
-    lat: '54.099300',
-    lon: '34.364900'
-  },
-  {
-    id: 2,
-    lat: '54.133200',
-    lon: '34.351500'
-  },
-  {
-    id: 3,
-    lat: '54.191300',
-    lon: '34.346200'
-  },
-  {
-    id: 4,
-    lat: '54.080000',
-    lon: '34.260800'
-  },
-  {
-    id: 5,
-    lat: '54.060800',
-    lon: '34.144400'
-  }
-]
-
-const responseStaitionTrains = {
-  trains: [
-    {
-      index: '128-072-1736',
-      num: '072',
-      depature: 128,
-      destination: 1736,
-      dislocation: 2154,
-      wagens: [{
-        num: 9903,
-        destination: 1771
-
-      },
-      {
-        num: 5907,
-        destination: 1771
-
-      },
-      {
-        num: 2917,
-        destination: 1771
-
-      },
-      
-      ]
-    }
-  ],
-
-}
-
 let siderCliked = true
 
-
-
-
 const AppLayout = () => {
+
   const [stations, setStations] = useState([])
-  const [currentStation, setCurrentStation] = useState('1')
-  const [stationClicked, setStationClicked] = useState(false)
+  const [currentStation, setCurrentStation] = useState()
+  const [stationClicked, setStationClicked] = useState(true)
   const [mode, setMode] = useState(true)
   const [trainsOnStation, setTrainsOnStation] = useState([])
   const [drawPath, setDrawPath] = useState(false)
+  const [curPath, setCurPath] = useState([])
 
-  // console.log('currentStation',currentStation)
   const URL = 'https://a117-89-113-136-156.ngrok-free.app'
- 
+
   useEffect(() => {
 
-   
     //Запрос информации по ID станции
-   
-    
-    
-    //Поезда
-    currentStation && fetch(`${URL}/api/trains?station=${currentStation}`)
-    .then((response) => {
-     // console.log('response', response)
-      let resp = response.json()
-      return resp
-    
-    })
-    .then(data => {
-      console.log('data', data)
-
-      setTrainsOnStation(data)
-    })
-
-
-
-    // setTimeout(() => {
-    //   setTrainsOnStation(responseStaitionTrains.trains)
-
-    // }, 1000)
-
-
+    //Запрос информации о поездах на станйии
+    currentStation && fetch(`${URL}/api/trains?station=${currentStation}&candidates_constraint=1`)
+      .then((response) => {
+        let resp = response.json()
+        return resp
+      })
+      .then(data => {
+        setTrainsOnStation(data)
+      })
   }, [currentStation])
 
   useEffect(() => {
-    //Запрос всех станций
-      fetch(`${URL}/api/stations`)
-        .then((data) => {
-          const station = []
-        for (let i=0;i<AllStations.slice(0,1500).length-1; i+=50) {
-        
-          station.push(AllStations[i])
-        } 
-        setStations(station) 
-        })
+    //Запрос всех станций при инициализации Приложения 
+    //Для оптимизации отрисовки сейчас выводятся не все станции
+    fetch(`${URL}/api/stations`)
+      .then((response) => response.json())
+      .then(data => {
+        const station = []
+        for (let i = 0; i < data.slice(0, 1500).length - 1; i += 50) {
+
+          station.push(data[i])
+        }
+        setStations(data)
+      })
   }, [])
 
   let siderActive = true
@@ -184,37 +100,38 @@ const AppLayout = () => {
         <Header style={headerStyle}>
           <MainHeader setMode={setMode} />
           {mode && <Clock live={true} hourMarkFormat="number" className="clock" />}
-          
         </Header>
 
+        {/* Секция с картой */}
         <Layout hasSider>
-          
           <Content style={contentStyle} >
-      
-          {/* <Clock live={true} hourMarkFormat="number" className="clock" /> */}
-
             {mode
               ? <MapContent
                 setCurrentStation={setCurrentStation}
                 setStationClicked={setStationClicked}
-                stations={stations} 
+                stations={stations}
                 drawPath={drawPath}
                 setDrawPath={setDrawPath}
-                />
+                curPath={curPath}
+              />
               : <MainTable />}
           </Content>
 
+          {/* Сайдер */}
           <Sider style={siderStyle} width={siderWidth}  >
             <h3>Информация о вагонах ПГК на станциях</h3>
-            <SiderContent
+
+            {!currentStation ? <h2>Выберите станцию</h2> : <SiderContent
               currentStation={currentStation}
               stationClicked={stationClicked}
               trainsOnStation={trainsOnStation.filter((tr) => tr.dislocation === currentStation)}
               setDrawPath={setDrawPath}
-            />
+              setCurPath={setCurPath}
+              drawPath={drawPath}
+            />}
           </Sider>
-
         </Layout>
+
         <Footer style={footerStyle}>  ©️ DataWagon Hakaton, 2023 </Footer>
       </Layout>
 

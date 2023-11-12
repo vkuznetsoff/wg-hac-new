@@ -1,10 +1,11 @@
 import { Avatar, Card, List, Tree } from 'antd';
 import { BasicAccordion } from './SiderList';
 import trainLogo from '../../img/train.png'
+import unique from "unique"
 
 
 
-const SiderContent = ({ currentStation, stationClicked, trainsOnStation, setDrawPath }) => {
+const SiderContent = ({ currentStation, stationClicked, trainsOnStation, setDrawPath, setCurPath }) => {
 
     let data = []
     let wagenData = []
@@ -39,9 +40,24 @@ const SiderContent = ({ currentStation, stationClicked, trainsOnStation, setDraw
 
     trainsOnStation && f()
 
-    const showPath = (from=currentStation, to) => {
-        setDrawPath(true)
-        console.log('from:', from, 'to:', to)
+    const showPath = (from = currentStation, to) => {
+        const URL = 'https://a117-89-113-136-156.ngrok-free.app'
+        fetch(
+            `${URL}/api/stations/path?start=${from}&end=${to}`)
+            .then((response) => {
+
+                let resp = response.json()
+                // console.log('resp', resp)
+                return resp
+
+            })
+            .then(data => {
+                console.log('path', data)
+                setCurPath(data)
+
+            })
+
+
     }
 
 
@@ -57,70 +73,39 @@ const SiderContent = ({ currentStation, stationClicked, trainsOnStation, setDraw
                 style={{
                     width: 300,
 
-                    
+
                 }}
             >
-                
-                { (trainsOnStation.length === 0) 
-                ? <div style={{
-                    padding: '20px 0',
-                    color: 'grey',
-                    fontWeight: 400
-                }}>На станции нет поездов</div>
-                : trainsOnStation.map((tr) => (
-                    <>
-                        <div style={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
 
-
-                        }}>
-                            <img src={trainLogo}
-                                alt="Вагон" height={25}
-                                style={{ marginRight: '10px' }} />
-
-                            
+                {(trainsOnStation.length === 0)
+                    ? <div style={{
+                        padding: '20px 0',
+                        color: 'grey',
+                        fontWeight: 400
+                    }}>На станции нет поездов</div>
+                    : trainsOnStation.map((tr) => (
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                            }}
+                                key={unique()}
+                            >
+                                <img src={trainLogo}
+                                    alt="Вагон" height={25}
+                                    style={{ marginRight: '10px' }} key={unique()} />
                                 <p> Поезд: {tr.index} </p>
-                                
+                            </div>
 
-
-                        </div>
-
-                        <BasicAccordion trainInfo={wagenData} showPath={showPath}/>
-
-                        {/* <List
-                            itemLayout="horizontal"
-                            dataSource={wagenData}
-                            renderItem={(item, index) => (
-                                <List.Item >
-                                    <div>
-                                        <List.Item.Meta
-                                            avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-                                            title={<a href="#">{`Номер вагона: ${item.title}`}</a>}
-                                            description={`До станции: ${item.destination}`}
-                                            style={{ textAlign: 'left', width: '200px'
-                                             }}
-                                        />
-                                        <div style={style}
-                                        onClick={() => showPath(tr.dislocation,item.destination)}
-                                        >Маршрут</div>
-                                    </div>
-
-                                </List.Item>
-                            )}
-                        /> */}
-                    </>
-
-                ))
+                            <BasicAccordion trainInfo={wagenData}
+                                showPath={showPath}
+                                setDrawPath={setDrawPath}
+                                key={unique()} />
+                        </>
+                    ))
                 }
-
-                <li>
-                    {/* <ul>v  Поезд 111-001-222</ul>
-                    <ul>v  Поезд 111-001-222</ul>
-                    <ul>v  Поезд 111-001-222</ul> */}
-                </li>
             </Card>}
         </div >
 

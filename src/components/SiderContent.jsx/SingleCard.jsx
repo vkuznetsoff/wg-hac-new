@@ -5,7 +5,8 @@ import wagonLogo from '../../img/wagon.png'
 import CardButton from "./CardButton";
 import { useState } from "react";
 
-const SingleCard = ({ wagon, showPath }) => {
+const SingleCard = ({ wagon, showPath, setDrawPath }) => {
+
   const { title, destination } = wagon
 
   const [isFav, setIsFav] = useState(false)
@@ -14,11 +15,10 @@ const SingleCard = ({ wagon, showPath }) => {
 
   const starClick = () => {
     setIsFav(!isFav)
-
   }
-  
+
   return (
-    <Card
+    <Card 
       bodyStyle={{
         padding: '5px 15px'
       }}
@@ -30,11 +30,7 @@ const SingleCard = ({ wagon, showPath }) => {
         marginBottom: '10px',
         textAlign: 'left',
         lineHeight: 0.5,
-
-
-
       }}
-
     >
       <div style={{
         display: 'flex',
@@ -48,13 +44,13 @@ const SingleCard = ({ wagon, showPath }) => {
         <div style={{
           display: 'inherit',
           alignItems: 'center'
-        }}>
+        }}
+          onClick={() => starClick}
+        >
           <p><b>{title}</b>  </p>
           <img src={wagonLogo} alt="Вагон" height={25} style={{ marginLeft: '10px' }} /></div>
 
-          <StarOutlined color={'#FFFF00'}  style={{background: isFav ? 'yellow' : 'none'}}
-          onClick={() => starClick()}/>
-
+        <StarOutlined color={'#FFFF00'} style={{ background: isFav ? 'yellow' : 'none' }} />
 
         <Badge count={'В пути'} style={{
           borderColor: '#56B7A1',
@@ -64,33 +60,23 @@ const SingleCard = ({ wagon, showPath }) => {
       </div>
       <p><b>Тип: </b>порожний</p>
       <p><b>Назначение: </b>{destination} <i>(Станция)</i></p>
-{/* 
-      <div style={{
-        border: '1px solid #0D60D3',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        alignItems: 'baseline',
-        width: '50%',
-        borderRadius: '15px',
-        color: '#0D60D3',
-        cursor: 'pointer',
-        fontSize: 12
-      }}
-        onClick={() => showPath(undefined, destination)}
-      ><p>Маршрут</p><BranchesOutlined color="#0D60D3" /></div> */}
-   <Flex gap={55}>
-   <CardButton text={'Маршрут'} textColor={"#0D60D3" }
-   width={"40%"}
-      icon={<BranchesOutlined color="#0D60D3" />} 
-      showPath={showPath} destination={destination}/>
 
-      <CardButton text={'Пройдено'} textColor={'#595959'}
-      width={"40%"}
-      icon={<HistoryOutlined  color="#595959"/>} 
-      showPath={showPath} destination={destination}/>
-   </Flex>
-    
+      <Flex gap={55}   >
+        <CardButton text={'Маршрут'} textColor={"#0D60D3"}
+          width={"40%"}
+          icon={<BranchesOutlined color="#0D60D3" />}
+          showPath={showPath} destination={destination}
+          setDrawPath={setDrawPath}
+
+        />
+
+        <CardButton text={'Пройдено'} textColor={'#595959'}
+          width={"40%"}
+          icon={<HistoryOutlined color="#595959" />}
+          showPath={showPath} destination={destination} 
+         />
+      </Flex>
+
 
     </Card>
 

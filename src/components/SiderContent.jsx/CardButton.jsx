@@ -1,5 +1,6 @@
 
-const CardButton = ({ text, textColor, icon, showPath, destination, width }) => {
+
+const CardButton = ({ text, textColor, icon, showPath, destination, width, setDrawPath }) => {
   return <div style={{
     border: '1px solid #0D60D3',
     display: 'flex',
@@ -12,7 +13,11 @@ const CardButton = ({ text, textColor, icon, showPath, destination, width }) => 
     cursor: 'pointer',
     fontSize: 12
   }}
-    onClick={() => showPath(undefined, destination)}
+    onClick={() => {
+      console.log('!!')
+      showPath(undefined, destination)
+      setDrawPath(true)
+    }}
   ><p>{text}</p>{icon}</div>
 }
 

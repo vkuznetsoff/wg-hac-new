@@ -35,31 +35,7 @@ const MainTable = () => {
         key: 'state',
         render: () => <Badge status="success" text="В пути" />,
       },
-    //   {
-    //     title: 'Upgrade Status',
-    //     dataIndex: 'upgradeNum',
-    //     key: 'upgradeNum',
-    //   },
-    //   {
-    //     title: 'Action',
-    //     dataIndex: 'operation',
-    //     key: 'operation',
-    //     render: () => (
-    //       <Space size="middle">
-    //         <a>Pause</a>
-    //         <a>Stop</a>
-    //         <Dropdown
-    //           menu={{
-    //             items,
-    //           }}
-    //         >
-    //           <a>
-    //             More <DownOutlined />
-    //           </a>
-    //         </Dropdown>
-    //       </Space>
-    //     ),
-    //   },
+   
     ];
     const data = [];
     for (let i = 0; i < 3; ++i) {
@@ -90,26 +66,13 @@ const MainTable = () => {
       dataIndex: 'to',
       key: 'to',
     },
-    // {
-    //   title: 'Upgraded',
-    //   dataIndex: 'upgradeNum',
-    //   key: 'upgradeNum',
-    // },
-    // {
-    //   title: 'Creator',
-    //   dataIndex: 'creator',
-    //   key: 'creator',
-    // },
+ 
     {
       title: 'Дата отправления',
       dataIndex: 'createdAt',
       key: 'createdAt',
     }
-    // {
-    //   title: 'Action',
-    //   key: 'operation',
-    //   render: () => <a>Publish</a>,
-    // },
+  
   ];
   const data = [];
   for (let i = 0; i < 3; ++i) {
@@ -118,8 +81,6 @@ const MainTable = () => {
       name: '11-908-333',
       from: 'Владивосток',
       to: 'Иркутск',
-    //   upgradeNum: 500,
-    //   creator: 'Jack',
       createdAt: '2023-12-24 23:12:00',
     });
   }
